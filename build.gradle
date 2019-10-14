@@ -9,7 +9,16 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web:2.1.9.RELEASE")
+    testCompile("org.springframework.boot:spring-boot-starter-test:2.1.9.RELEASE")
 }
+
+bootRun.environment([
+        "WELCOME_MESSAGE": "hello",
+])
+
+test.environment([
+        "WELCOME_MESSAGE": "Hello from test",
+])
 
 
 
