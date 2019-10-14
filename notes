@@ -1,0 +1,71 @@
+//misc
+-------------------------------------------------------------------------------------------------------------------
+https://plugins.gradle.org/
+https://docs.cloudfoundry.org/devguide/deploy-apps/environment-variable.html
+spring boot dev tools
+@GetMapping vs other implementation
+investigate constructor injection rather than field injection (even on just private variables?)
+
+
+//what to do when PCF doesn't like that you're using java 11
+-------------------------------------------------------------------------------------------------------------------
+gradle
+    sourceCompatibility = '1.8'
+OR
+cf set-env pal-tracker JBP_CONFIG_OPEN_JDK_JRE '{ jre: { version: 11.+ } }'
+
+
+//why gradlew?
+-------------------------------------------------------------------------------------------------------------------
+gradle wrapper script ensures matching version
+see gradle/wrapper/gradle-wrapper.properties
+
+
+//intelliJ shortcuts
+-------------------------------------------------------------------------------------------------------------------
+ctrl+click
+ctrl+shift+a : command for when you don't know the command
+alt+enter : imports
+F2 : go to next error location
+
+
+//cloud foundry notes
+-------------------------------------------------------------------------------------------------------------------
+cf cli talks to cloud controller
+    cloud controller: api.sys...
+apps all sit on top of foundation, which understands how to network with everything inside
+external communications need to be set up at foundation level
+    platform engineers need to make policy decisions on ingress/egress
+DEA + code written in Go = Diego
+    DEA: Droplet Execution Agent
+Go router
+    Take incoming requests (from load balancer), routes to internal addresses of applications inside diego cells
+    Multiple instances - high availability, distribution of load, etc
+Cloud foundry is platform agnostic - VMWare, Azure, OpenStack, AWS
+Foundry
+|__Org
+   |__Space
+Org+Space doesn't matter at runtime, everything sits in diego cells on the foundry in the end
+Staging
+    Short running process. Can I put things together on a container?
+    "The process of creating an immutable container"
+    If successful, move on to droplet
+        Artifact, runtime, etc.
+        Tarballed and stored in database
+        Easily reproducable
+Droplet vs Image
+    Images have layers, droplet does not
+Buildpacks
+    definitions for different applications
+        how do i run? what's the environment? libraries?
+    transforms code into single executable
+    stages
+        detection - determines whether the buildpack can stage the application
+            look for gemfile, package, setup, etc
+        compliation - build the droplet
+            runtime, app server, libraries
+        release - provide info on how to run the application
+            start command, YAML file
+App is run inside of a RunC container, on a diego cell
+    auctioning occurs to prevent overloading
+    brain manages auctioning
